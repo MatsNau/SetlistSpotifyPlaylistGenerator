@@ -3,6 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+#accessData
+accessData.json
+
+#tokenInfo
+spotify_token.json
+
 #vcpkg
 .vcpkg_installed/
 .x64/
@@ -365,3 +371,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/vcpkg_installed/x64-windows
+/accessData.json
