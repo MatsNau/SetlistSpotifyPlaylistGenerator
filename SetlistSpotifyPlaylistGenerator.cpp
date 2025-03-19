@@ -9,38 +9,30 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shellapi.h>
+#include "SetlistFmService.h"
 // Link mit der Windows Shell-Bibliothek
 #pragma comment(lib, "shell32.lib")
 int main() {
-    // Überprüfen, ob die Konfigurationsdatei existiert
-    /*/if (!std::filesystem::exists("AccessData.json")) {
-        std::cout << "Creating default config file 'accessData.json'..." << std::endl;
-        ConfigLoader::createDefaultConfig("accessData.json");
-        std::cout << "Please edit 'AccessData.json' with your Spotify API credentials." << std::endl;
-        return 0;
-    }*/
     try {
         // Konfiguration laden
         auto config = ConfigLoader::loadConfig("accessData.json");
 
-
-        // SpotifyService mit geladener Konfiguration initialisieren
-        SpotifyService::AuthConfig authConfig{
-            config.client_id,
-            config.client_secret,
-            config.redirect_uri
+        // SpotifyService initialisieren
+        SpotifyService::AuthConfig spotifyConfig{
+            config.spotify.client_id,
+            config.spotify.client_secret,
+            config.spotify.redirect_uri
         };
+        SpotifyService spotify(spotifyConfig);
 
-        SpotifyService spotify(authConfig);
-
-        // Versuche gespeicherten Token zu laden
+        // Token laden oder Auth-Flow starten
         if (!spotify.loadTokenFromFile()) {
-            // Wenn kein Token vorhanden, starte Auth-Flow
+            // Auth-Flow wie gehabt...
             std::string authUrl =
                 "https://accounts.spotify.com/authorize?"
-                "client_id=" + config.client_id +
+                "client_id=" + config.spotify.client_id +
                 "&response_type=code"
-                "&redirect_uri=" + config.redirect_uri +
+                "&redirect_uri=" + config.spotify.redirect_uri +
                 "&scope=user-read-private%20playlist-modify-public";
 
             // Browser öffnen
@@ -60,55 +52,76 @@ int main() {
             ioc.run();
         }
 
-        // Beispiel: Track suchen
-        std::cout << "\nSuche nach Track..." << std::endl;
-        if (auto result = spotify.searchTrack("Concerning Hobbits")) {
-            try {
-                // Debug-Ausgabe der gesamten JSON-Antwort
-                std::cout << "Erhaltene JSON-Antwort:\n" << result->dump(2) << std::endl;
+        // SetlistFmService initialisieren
+        SetlistFmService::Config setlistConfig{
+            config.setlistfm.api_key
+        };
+        SetlistFmService setlistFm(setlistConfig);
 
-                // Zugriff auf die Track-Informationen
-                if ((*result).contains("tracks") &&
-                    (*result)["tracks"].contains("items") &&
-                    !(*result)["tracks"]["items"].empty()) {
+        // Setlist-ID vom Benutzer abfragen
+        std::string setlistId;
+        std::cout << "Bitte Setlist-ID eingeben: ";
+        std::getline(std::cin, setlistId);
 
-                    auto track = (*result)["tracks"]["items"][0];
-                    std::cout << "\nGefundener Track:" << std::endl;
-                    std::cout << "Name: " << track["name"] << std::endl;
+        // Setlist abrufen
+        std::cout << "\nSetlist wird abgerufen...\n" << std::endl;
+        auto setlist = setlistFm.getSetlist(setlistId);
 
-                    if (track.contains("artists") && !track["artists"].empty()) {
-                        std::cout << "Künstler: " << track["artists"][0]["name"] << std::endl;
-                    }
+        if (setlist) {
+            // Setlist-Informationen anzeigen
+            std::cout << "Setlist: " << setlist->artist << " @ "
+                << setlist->venue << ", " << setlist->city
+                << ", " << setlist->country << std::endl;
+            std::cout << "Datum: " << setlist->eventDate << std::endl;
+            std::cout << "\nSongs:\n" << std::endl;
 
-                    if (track.contains("album")) {
-                        std::cout << "Album: " << track["album"]["name"] << std::endl;
-                    }
-
-                    if (track.contains("duration_ms")) {
-                        int duration_sec = track["duration_ms"].get<int>() / 1000;
-                        std::cout << "Dauer: " << duration_sec / 60 << ":"
-                            << std::setfill('0') << std::setw(2) << duration_sec % 60
-                            << std::endl;
-                    }
-
-                    if (track.contains("external_urls") &&
-                        track["external_urls"].contains("spotify")) {
-                        std::cout << "Spotify URL: " << track["external_urls"]["spotify"] << std::endl;
-                    }
+            // Songs auflisten
+            int i = 1;
+            for (const auto& song : setlist->songs) {
+                std::cout << std::setw(3) << i << ". " << song.name;
+                if (song.isCover && !song.coverArtist.empty()) {
+                    std::cout << " (Cover von " << song.coverArtist << ")";
                 }
+                std::cout << std::endl;
+                i++;
             }
-            catch (const json::exception& e) {
-                std::cerr << "Fehler beim Parsen der JSON-Antwort: " << e.what() << std::endl;
+
+            // Weitere Aktionen...
+            std::cout << "\nMöchtest du diese Setlist als Spotify-Playlist erstellen? (j/n): ";
+            std::string answer;
+            std::getline(std::cin, answer);
+
+            if (answer == "j" || answer == "J") {
+                // Playlist-Name generieren
+                std::string playlistName = setlist->artist + " @ " + setlist->venue + " (" + setlist->eventDate + ")";
+
+                // Songs in das Format umwandeln, das die importSetlistToSpotify-Methode erwartet
+                std::vector<std::pair<std::string, std::string>> songList;
+                for (const auto& song : setlist->songs) {
+                    // Für Covers den Original-Künstler verwenden
+                    std::string artistToUse = song.isCover ? song.coverArtist : "";
+                    songList.push_back({ song.name, artistToUse });
+                }
+
+                // Import starten
+                if (spotify.importSetlistToSpotify(playlistName, setlist->artist, songList)) {
+                    std::cout << "Playlist wurde erfolgreich erstellt!" << std::endl;
+                }
+                else {
+                    std::cout << "Es gab Probleme beim Erstellen der Playlist." << std::endl;
+                }
             }
         }
         else {
-            std::cout << "Fehler bei der Track-Suche!" << std::endl;
+            std::cout << "Fehler beim Abrufen der Setlist!" << std::endl;
         }
     }
     catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
+
+    return 0;
 
 }
 

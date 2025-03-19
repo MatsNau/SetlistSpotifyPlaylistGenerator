@@ -137,12 +137,14 @@
   <ItemGroup>
     <ClCompile Include="CallbackServer.cpp" />
     <ClCompile Include="ConfigLoader.cpp" />
+    <ClCompile Include="SetlistFmService.cpp" />
     <ClCompile Include="SetlistSpotifyPlaylistGenerator.cpp" />
     <ClCompile Include="SpotifyService.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CallbackServer.h" />
     <ClInclude Include="ConfigLoader.h" />
+    <ClInclude Include="SetlistFmService.h" />
     <ClInclude Include="SpotifyService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
