@@ -3,6 +3,13 @@
     "boost",
     "fmt",
     "nlohmann-json",
-    "curl"
+    "curl",
+    {
+      "name": "imgui",
+      "features": [
+        "dx11-binding",
+        "win32-binding"
+      ]
+    }
   ]
 }
