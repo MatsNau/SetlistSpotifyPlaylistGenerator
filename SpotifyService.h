@@ -1,20 +1,10 @@
 #pragma once
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/ssl.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/ssl/stream.hpp>
 #include <string>
 #include <optional>
-#include <fstream>
+#include <vector>
+#include <chrono>
 #include <nlohmann/json.hpp>
 
-namespace beast = boost::beast;
-namespace http = beast::http;
-namespace net = boost::asio;
-namespace ssl = boost::asio::ssl;
-using tcp = net::ip::tcp;
 using json = nlohmann::json;
 
 class SpotifyService {
@@ -31,11 +21,11 @@ public:
         int64_t expires_in;
         std::string token_type;
         std::chrono::system_clock::time_point timestamp;
-
         bool isExpired() const;
     };
 
     SpotifyService(const AuthConfig& config);
+    ~SpotifyService();
 
     // Token-Management
     bool requestAccessToken(const std::string& auth_code);
@@ -46,17 +36,25 @@ public:
     // API-Zugriffe
     std::optional<json> getTrack(const std::string& track_id);
     std::optional<json> searchTrack(const std::string& query);
+    std::optional<std::string> searchTrackId(const std::string& trackName, const std::string& artist);
+
+    // Playlist-Management
+    std::optional<std::string> createPlaylist(const std::string& name, const std::string& description = "");
+    bool addTracksToPlaylist(const std::string& playlistId, const std::vector<std::string>& trackIds);
+    bool importSetlistToSpotify(const std::string& playlistName,
+        const std::string& artist,
+        const std::vector<std::pair<std::string, std::string>>& songs);
 
 private:
     AuthConfig config_;
     TokenInfo token_info_;
-    std::unique_ptr<net::io_context> ioc_;
-    std::unique_ptr<ssl::context> ctx_;
 
-    std::optional<json> makeApiRequest(const std::string& host,
-        const std::string& target,
-        http::verb method = http::verb::get);
+    std::optional<json> makeApiRequest(
+        const std::string& endpoint,
+        const std::string& method = "GET",
+        const json& body = nullptr);
 
     bool ensureValidToken();
     std::string createAuthHeader() const;
+    static std::string urlEncode(const std::string& value);
 };
