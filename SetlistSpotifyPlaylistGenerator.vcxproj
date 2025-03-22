@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\vcpkg.A.vcpkg.vcpkg.1.0.0\build\native\vcpkg.A.vcpkg.vcpkg.props" Condition="Exists('packages\vcpkg.A.vcpkg.vcpkg.1.0.0\build\native\vcpkg.A.vcpkg.vcpkg.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -116,6 +115,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,31 +133,34 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AppInitializer.cpp" />
     <ClCompile Include="CallbackServer.cpp" />
     <ClCompile Include="ConfigLoader.cpp" />
+    <ClCompile Include="DirectXSetup.cpp" />
+    <ClCompile Include="SetlistFmService.cpp" />
     <ClCompile Include="SetlistSpotifyPlaylistGenerator.cpp" />
     <ClCompile Include="SpotifyService.cpp" />
+    <ClCompile Include="UIRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppInitializer.h" />
+    <ClInclude Include="AppState.h" />
     <ClInclude Include="CallbackServer.h" />
     <ClInclude Include="ConfigLoader.h" />
+    <ClInclude Include="DirectXSetup.h" />
+    <ClInclude Include="SetlistFmService.h" />
     <ClInclude Include="SpotifyService.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="UIRenderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="packages\vcpkg.A.vcpkg.vcpkg.1.0.0\build\native\vcpkg.A.vcpkg.vcpkg.targets" Condition="Exists('packages\vcpkg.A.vcpkg.vcpkg.1.0.0\build\native\vcpkg.A.vcpkg.vcpkg.targets')" />
   </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('packages\vcpkg.A.vcpkg.vcpkg.1.0.0\build\native\vcpkg.A.vcpkg.vcpkg.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\vcpkg.A.vcpkg.vcpkg.1.0.0\build\native\vcpkg.A.vcpkg.vcpkg.props'))" />
-    <Error Condition="!Exists('packages\vcpkg.A.vcpkg.vcpkg.1.0.0\build\native\vcpkg.A.vcpkg.vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\vcpkg.A.vcpkg.vcpkg.1.0.0\build\native\vcpkg.A.vcpkg.vcpkg.targets'))" />
-  </Target>
 </Project>

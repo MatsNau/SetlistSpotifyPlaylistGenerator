@@ -12,7 +12,15 @@ public:
         std::string redirect_uri;
     };
 
-    static SpotifyConfig loadConfig(const std::string& filename);
+    struct SetlistFmConfig {
+        std::string api_key;
+    };
 
+    struct AppConfig {
+        SpotifyConfig spotify;
+        SetlistFmConfig setlistfm;
+    };
+
+    static AppConfig loadConfig(const std::string& filename);
     static void createDefaultConfig(const std::string& filename);
 };

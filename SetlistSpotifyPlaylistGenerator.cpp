@@ -1,113 +1,156 @@
-// SetlistSpotifyPlaylistGenerator.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-#include "CallbackServer.h"
-#include "SpotifyService.h"
-#include "ConfigLoader.h"
-#include <iostream>
-#include <filesystem>
-// Windows-spezifische Header
+
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+// Windows-Plattform definieren
+#ifdef _WIN64
+#define _AMD64_
+#elif defined(_WIN32)
+#define _X86_
+#endif
+
+// Windows-Header
 #include <windows.h>
-#include <shellapi.h>
-// Link mit der Windows Shell-Bibliothek
-#pragma comment(lib, "shell32.lib")
-int main() {
-    // Überprüfen, ob die Konfigurationsdatei existiert
-    /*/if (!std::filesystem::exists("AccessData.json")) {
-        std::cout << "Creating default config file 'accessData.json'..." << std::endl;
-        ConfigLoader::createDefaultConfig("accessData.json");
-        std::cout << "Please edit 'AccessData.json' with your Spotify API credentials." << std::endl;
-        return 0;
-    }*/
-    try {
-        // Konfiguration laden
-        auto config = ConfigLoader::loadConfig("accessData.json");
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
+// DirectX-Header
+#include <d3d11.h>
+#include <tchar.h>
 
-        // SpotifyService mit geladener Konfiguration initialisieren
-        SpotifyService::AuthConfig authConfig{
-            config.client_id,
-            config.client_secret,
-            config.redirect_uri
-        };
+// ImGui-Header
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx11.h>
 
-        SpotifyService spotify(authConfig);
+// Eigene Projekt-Header
+#include "AppState.h"
+#include "UIRenderer.h"
+#include "AppInitializer.h"
+#include "DirectXSetup.h"
 
-        // Versuche gespeicherten Token zu laden
-        if (!spotify.loadTokenFromFile()) {
-            // Wenn kein Token vorhanden, starte Auth-Flow
-            std::string authUrl =
-                "https://accounts.spotify.com/authorize?"
-                "client_id=" + config.client_id +
-                "&response_type=code"
-                "&redirect_uri=" + config.redirect_uri +
-                "&scope=user-read-private%20playlist-modify-public";
+// Forward-Deklaration von ImGui_ImplWin32_WndProcHandler
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-            // Browser öffnen
-            ShellExecuteA(NULL, "open", authUrl.c_str(), NULL, NULL, SW_SHOWNORMAL);
+// Win32 Nachrichtenverarbeitung
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-            // Callback-Server starten
-            net::io_context ioc;
-            CallbackServer server(ioc, 8080);
+// DirectX-Variablen
+ID3D11Device* g_pd3dDevice = nullptr;
+ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
+IDXGISwapChain* g_pSwapChain = nullptr;
+ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
 
-            server.start([&spotify](const std::string& code) {
-                std::cout << "Received auth code. Requesting access token..." << std::endl;
-                if (spotify.requestAccessToken(code)) {
-                    std::cout << "Successfully obtained access token!" << std::endl;
-                }
-                });
+int main(int, char**)
+{
+    // Fenster erstellen
+    WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"Setlist Spotify Generator", nullptr };
+    RegisterClassExW(&wc);
+    HWND hwnd = CreateWindowW(wc.lpszClassName, L"Setlist Spotify Generator", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
 
-            ioc.run();
-        }
-
-        // Beispiel: Track suchen
-        std::cout << "\nSuche nach Track..." << std::endl;
-        if (auto result = spotify.searchTrack("Concerning Hobbits")) {
-            try {
-                // Debug-Ausgabe der gesamten JSON-Antwort
-                std::cout << "Erhaltene JSON-Antwort:\n" << result->dump(2) << std::endl;
-
-                // Zugriff auf die Track-Informationen
-                if ((*result).contains("tracks") &&
-                    (*result)["tracks"].contains("items") &&
-                    !(*result)["tracks"]["items"].empty()) {
-
-                    auto track = (*result)["tracks"]["items"][0];
-                    std::cout << "\nGefundener Track:" << std::endl;
-                    std::cout << "Name: " << track["name"] << std::endl;
-
-                    if (track.contains("artists") && !track["artists"].empty()) {
-                        std::cout << "Künstler: " << track["artists"][0]["name"] << std::endl;
-                    }
-
-                    if (track.contains("album")) {
-                        std::cout << "Album: " << track["album"]["name"] << std::endl;
-                    }
-
-                    if (track.contains("duration_ms")) {
-                        int duration_sec = track["duration_ms"].get<int>() / 1000;
-                        std::cout << "Dauer: " << duration_sec / 60 << ":"
-                            << std::setfill('0') << std::setw(2) << duration_sec % 60
-                            << std::endl;
-                    }
-
-                    if (track.contains("external_urls") &&
-                        track["external_urls"].contains("spotify")) {
-                        std::cout << "Spotify URL: " << track["external_urls"]["spotify"] << std::endl;
-                    }
-                }
-            }
-            catch (const json::exception& e) {
-                std::cerr << "Fehler beim Parsen der JSON-Antwort: " << e.what() << std::endl;
-            }
-        }
-        else {
-            std::cout << "Fehler bei der Track-Suche!" << std::endl;
-        }
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+    // DirectX initialisieren
+    if (!DirectXSetup::CreateDeviceD3D(hwnd, &g_pd3dDevice, &g_pd3dDeviceContext, &g_pSwapChain, &g_mainRenderTargetView))
+    {
+        DirectXSetup::CleanupDeviceD3D(g_pd3dDevice, g_pd3dDeviceContext, g_pSwapChain, g_mainRenderTargetView);
+        UnregisterClassW(wc.lpszClassName, wc.hInstance);
         return 1;
     }
 
+    // Fenster anzeigen
+    ShowWindow(hwnd, SW_SHOWDEFAULT);
+    UpdateWindow(hwnd);
+
+    // ImGui einrichten
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    ImGui::StyleColorsDark();
+
+    // Platform/Renderer-Backends einrichten
+    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+    // Anwendungszustand initialisieren
+    AppState appState;
+    if (!AppInitializer::InitializeServices(appState)) {
+        MessageBoxA(hwnd, "Fehler bei der Initialisierung der Services", "Fehler", MB_ICONERROR);
+    }
+
+    // Hauptschleife
+    bool done = false;
+    while (!done)
+    {
+        // Windows-Nachrichten verarbeiten
+        MSG msg;
+        while (PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+            if (msg.message == WM_QUIT)
+                done = true;
+        }
+        if (done)
+            break;
+
+        // ImGui Frame starten
+        ImGui_ImplDX11_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+
+        // UI rendern
+        UIRenderer::RenderMainUI(appState);
+
+        // Rendern
+        ImGui::Render();
+        const float clear_color_with_alpha[4] = { 0.1f, 0.1f, 0.1f, 1.00f };
+        g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
+        g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+        g_pSwapChain->Present(1, 0);
+    }
+
+    // Cleanup
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+
+    DirectXSetup::CleanupDeviceD3D(g_pd3dDevice, g_pd3dDeviceContext, g_pSwapChain, g_mainRenderTargetView);
+    DestroyWindow(hwnd);
+    UnregisterClassW(wc.lpszClassName, wc.hInstance);
+
+    return 0;
+}
+
+// Win32 Nachrichtenverarbeitung
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+        return true;
+
+    switch (msg)
+    {
+    case WM_SIZE:
+        if (g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
+        {
+            DirectXSetup::CleanupRenderTarget(g_mainRenderTargetView);
+            g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, 0);
+            DirectXSetup::CreateRenderTarget(g_pd3dDevice, g_pSwapChain, &g_mainRenderTargetView);
+        }
+        return 0;
+    case WM_SYSCOMMAND:
+        if ((wParam & 0xfff0) == SC_KEYMENU) // Deaktivieren des ALT-Anwendungsmenüs
+            return 0;
+        break;
+    case WM_DESTROY:
+        ::PostQuitMessage(0);
+        return 0;
+    }
+    return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
