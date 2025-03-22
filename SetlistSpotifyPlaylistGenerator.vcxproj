@@ -136,21 +136,29 @@
       <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(VcpkgRoot)installed\$(VcpkgTriplet)\bin\*.dll" "$(OutDir)</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AppInitializer.cpp" />
     <ClCompile Include="CallbackServer.cpp" />
     <ClCompile Include="ConfigLoader.cpp" />
+    <ClCompile Include="DirectXSetup.cpp" />
     <ClCompile Include="SetlistFmService.cpp" />
     <ClCompile Include="SetlistSpotifyPlaylistGenerator.cpp" />
     <ClCompile Include="SpotifyService.cpp" />
+    <ClCompile Include="UIRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppInitializer.h" />
+    <ClInclude Include="AppState.h" />
     <ClInclude Include="CallbackServer.h" />
     <ClInclude Include="ConfigLoader.h" />
+    <ClInclude Include="DirectXSetup.h" />
     <ClInclude Include="SetlistFmService.h" />
     <ClInclude Include="SpotifyService.h" />
+    <ClInclude Include="UIRenderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
