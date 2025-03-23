@@ -1,6 +1,8 @@
 # Setlist Spotify Playlist Generator
 
 A desktop application that bridges the gap between setlist.fm and Spotify, allowing you to easily turn concert setlists into Spotify playlists.
+![image](https://github.com/user-attachments/assets/39211893-aecb-48f9-997e-5029e14d2607)
+
 
 ## Features
 
@@ -17,8 +19,7 @@ This application is built with:
 - C++ (C++17 standard)
 - Dear ImGui for the user interface
 - DirectX 11 for rendering
-- Boost Beast for HTTP connections to the setlist.fm API
-- libcurl for interacting with the Spotify API
+- libcurl for interacting with the Spotify API and teh setlist.fm API
 - nlohmann/json for JSON parsing
 
 ## Getting Started
