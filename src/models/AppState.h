@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "SetlistFmService.h"
-#include "SpotifyService.h"
+#include "../services/SetlistFmService.h"
+#include "../services/SpotifyService.h"
 /// <summary>
 /// Beinhaltet den Zustand der Anwendung, der von der UI verwendet wird und die Services für Spotify und Setlist.fm.
 /// </summary>

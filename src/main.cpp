@@ -29,10 +29,10 @@
 #include <imgui_impl_dx11.h>
 
 // Eigene Projekt-Header
-#include "AppState.h"
-#include "UIRenderer.h"
-#include "AppInitializer.h"
-#include "DirectXSetup.h"
+#include "models/AppState.h"
+#include "ui/UIRenderer.h"
+#include "app/AppInitializer.h"
+#include "ui/DirectXSetup.h"
 
 // Forward-Deklaration von ImGui_ImplWin32_WndProcHandler
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -2,16 +2,17 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
-#include "AppInitializer.h"
-#include "ConfigLoader.h"
 #include <thread>
 #include <shellapi.h>
-#include "CallbackServer.h"
+
+#include "AppInitializer.h"
+#include "../utils/ConfigLoader.h"
+#include "../utils/CallbackServer.h"
 
 bool AppInitializer::InitializeServices(AppState& state) {
     try {
         // Konfiguration laden
-        auto config = ConfigLoader::loadConfig("accessData.json");
+        auto config = ConfigLoader::loadConfig("config/accessData.json");
 
         // SpotifyService initialisieren
         SpotifyService::AuthConfig spotifyConfig{

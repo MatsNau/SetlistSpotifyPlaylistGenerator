@@ -1,0 +1,10 @@
+{
+  "spotify": {
+    "client_id": "710ada5cf75a455b97b597f1ebe37438",
+    "client_secret": "9c4f48cfc60d44188d749d1976305219",
+    "redirect_uri": "http://localhost:8080"
+  },
+  "setlistfm": {
+    "api_key": "W17nZw94kZqWW7NEwB5NFG8yyQXRZ4Dshazb"
+  }
+}

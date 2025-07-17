@@ -141,24 +141,29 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AppInitializer.cpp" />
-    <ClCompile Include="CallbackServer.cpp" />
-    <ClCompile Include="ConfigLoader.cpp" />
-    <ClCompile Include="DirectXSetup.cpp" />
-    <ClCompile Include="SetlistFmService.cpp" />
-    <ClCompile Include="SetlistSpotifyPlaylistGenerator.cpp" />
-    <ClCompile Include="SpotifyService.cpp" />
-    <ClCompile Include="UIRenderer.cpp" />
+    <ClInclude Include="src\app\AppInitializer.h" />
+    <ClInclude Include="src\models\AppState.h" />
+    <ClInclude Include="src\services\SetlistFmService.h" />
+    <ClInclude Include="src\services\SpotifyService.h" />
+    <ClInclude Include="src\ui\DirectXSetup.h" />
+    <ClInclude Include="src\ui\UIRenderer.h" />
+    <ClInclude Include="src\utils\CallbackServer.h" />
+    <ClInclude Include="src\utils\ConfigLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AppInitializer.h" />
-    <ClInclude Include="AppState.h" />
-    <ClInclude Include="CallbackServer.h" />
-    <ClInclude Include="ConfigLoader.h" />
-    <ClInclude Include="DirectXSetup.h" />
-    <ClInclude Include="SetlistFmService.h" />
-    <ClInclude Include="SpotifyService.h" />
-    <ClInclude Include="UIRenderer.h" />
+    <ClCompile Include="src\app\AppInitializer.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\services\SetlistFmService.cpp" />
+    <ClCompile Include="src\services\SpotifyService.cpp" />
+    <ClCompile Include="src\ui\DirectXSetup.cpp" />
+    <ClCompile Include="src\ui\UIRenderer.cpp" />
+    <ClCompile Include="src\utils\CallbackServer.cpp" />
+    <ClCompile Include="src\utils\ConfigLoader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config\accessData.json" />
+    <None Include="config\accessData.json.template" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
