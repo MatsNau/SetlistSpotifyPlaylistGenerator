@@ -3,11 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-#accessData
-accessData.json
+# Laufzeitdaten
+data/spotify_token.json
+data/imgui.ini
 
-#tokenInfo
-spotify_token.json
+# Konfiguration mit API-Keys
+config/accessData.json
 
 #vcpkg
 .vcpkg_installed/

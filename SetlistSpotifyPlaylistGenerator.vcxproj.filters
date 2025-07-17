@@ -1,69 +1,114 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator">
+      <UniqueIdentifier>{70fd8eac-f87d-4326-96cb-0748cb3529bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Source Files">
+      <UniqueIdentifier>{e9cc8857-2b8f-40a6-9cf5-f75adfc0e385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Source Files\services">
+      <UniqueIdentifier>{55bcc53c-5f85-49fe-90da-ece479d6ec66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Source Files\ui">
+      <UniqueIdentifier>{c735da34-1b11-481b-9865-87b1017ce738}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Source Files\utils">
+      <UniqueIdentifier>{05ec70bb-2dd2-4ec1-af3e-b9a68140e281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Source Files\app">
+      <UniqueIdentifier>{290599eb-8579-4d05-b24c-4bfac189ee8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Header Files">
+      <UniqueIdentifier>{248523b0-e9cc-4443-9e15-d6cfe91e9aa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Header Files\services">
+      <UniqueIdentifier>{d2f272f5-4f8a-41b9-9f59-5bb572e3ab04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Header Files\ui">
+      <UniqueIdentifier>{5fe9136b-b5e1-4ad0-8ad7-29b37bcdbcea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Header Files\utils">
+      <UniqueIdentifier>{98fa3c0a-22a1-40f1-a1ea-a7fe9a430644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Header Files\models">
+      <UniqueIdentifier>{ccce6da8-3ff2-4eec-881f-15a0289b3ad6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Header Files\app">
+      <UniqueIdentifier>{ff203725-1704-4cc8-b207-b51f57acfc63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\Config Files">
+      <UniqueIdentifier>{5b9fb803-b0c3-4077-9453-2b21aa40c32f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetlistSpotifyPlaylistGenerator\External">
+      <UniqueIdentifier>{145e2b0f-3d30-499a-afb0-7749ad875280}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SetlistSpotifyPlaylistGenerator.cpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="src\services\SetlistFmService.h">
+      <Filter>SetlistSpotifyPlaylistGenerator\Header Files\services</Filter>
+    </ClInclude>
+    <ClInclude Include="src\services\SpotifyService.h">
+      <Filter>SetlistSpotifyPlaylistGenerator\Header Files\services</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\DirectXSetup.h">
+      <Filter>SetlistSpotifyPlaylistGenerator\Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\UIRenderer.h">
+      <Filter>SetlistSpotifyPlaylistGenerator\Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\CallbackServer.h">
+      <Filter>SetlistSpotifyPlaylistGenerator\Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\ConfigLoader.h">
+      <Filter>SetlistSpotifyPlaylistGenerator\Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\AppInitializer.h">
+      <Filter>SetlistSpotifyPlaylistGenerator\Header Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\AppState.h">
+      <Filter>SetlistSpotifyPlaylistGenerator\Header Files\models</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\app\AppInitializer.cpp">
+      <Filter>SetlistSpotifyPlaylistGenerator\Source Files\app</Filter>
     </ClCompile>
-    <ClCompile Include="SpotifyService.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\utils\CallbackServer.cpp">
+      <Filter>SetlistSpotifyPlaylistGenerator\Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="CallbackServer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\utils\ConfigLoader.cpp">
+      <Filter>SetlistSpotifyPlaylistGenerator\Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigLoader.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\ui\DirectXSetup.cpp">
+      <Filter>SetlistSpotifyPlaylistGenerator\Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="SetlistFmService.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\ui\UIRenderer.cpp">
+      <Filter>SetlistSpotifyPlaylistGenerator\Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="UIRenderer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\services\SetlistFmService.cpp">
+      <Filter>SetlistSpotifyPlaylistGenerator\Source Files\services</Filter>
     </ClCompile>
-    <ClCompile Include="AppInitializer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\services\SpotifyService.cpp">
+      <Filter>SetlistSpotifyPlaylistGenerator\Source Files\services</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXSetup.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\main.cpp">
+      <Filter>SetlistSpotifyPlaylistGenerator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CallbackServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpotifyService.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SetlistFmService.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AppState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UIRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AppInitializer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXSetup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <None Include="config\accessData.json">
+      <Filter>SetlistSpotifyPlaylistGenerator\Config Files</Filter>
+    </None>
+    <None Include="config\accessData.json.template">
+      <Filter>SetlistSpotifyPlaylistGenerator\Config Files</Filter>
+    </None>
+    <None Include="vcpkg.json">
+      <Filter>SetlistSpotifyPlaylistGenerator\Config Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
